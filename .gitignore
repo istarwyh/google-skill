@@ -9,6 +9,22 @@ data/
 data/*
 data/**/*
 
+# Test directories and generated content
+test_*/
+*_test/
+generated_images/
+skill_intro*/
+final_intro/
+
+# Generated images (keep documentation images in images/)
+*.png
+*.jpg
+*.jpeg
+*.webp
+!images/*.png
+!images/*.jpg
+!images/*.jpeg
+
 # Claude-specific
 .claude/
 *.claude
