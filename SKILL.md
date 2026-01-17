@@ -1,20 +1,30 @@
 ---
 name: notebooklm
-description: Use this skill to query your Google NotebookLM notebooks directly from Claude Code for source-grounded, citation-backed answers from Gemini. Browser automation, library management, persistent auth. Drastically reduced hallucinations through document-only responses.
+description: Use this skill to query your Google NotebookLM notebooks directly from Claude Code for source-grounded, citation-backed answers from Gemini. Browser automation, library management, persistent auth. Drastically reduced hallucinations through document-only responses. (user)
 ---
 
-# NotebookLM Research Assistant Skill
+# NotebookLM & Gemini Research Assistant Skill
 
-Interact with Google NotebookLM to query documentation with Gemini's source-grounded answers. Each question opens a fresh browser session, retrieves the answer exclusively from your uploaded documents, and closes.
+Interact with Google NotebookLM to query documentation with Gemini's source-grounded answers, or query Gemini directly for general knowledge. Each question opens a fresh browser session, retrieves the answer, and closes.
+
+**Two modes:**
+- **NotebookLM Mode**: Query your uploaded documents for source-grounded, citation-backed answers
+- **Gemini Mode**: Query Gemini directly for general knowledge and AI assistance
 
 ## When to Use This Skill
 
-Trigger when user:
+**NotebookLM Mode** - Trigger when user:
 - Mentions NotebookLM explicitly
 - Shares NotebookLM URL (`https://notebooklm.google.com/notebook/...`)
 - Asks to query their notebooks/documentation
 - Wants to add documentation to NotebookLM library
 - Uses phrases like "ask my NotebookLM", "check my docs", "query my notebook"
+
+**Gemini Mode** - Trigger when user:
+- Mentions Gemini explicitly
+- Shares Gemini URL (`https://gemini.google.com/app`)
+- Asks to query Gemini for general knowledge
+- Uses phrases like "ask Gemini", "query Gemini", "what does Gemini say"
 
 ## ⚠️ CRITICAL: Add Command - Smart Discovery
 
@@ -109,7 +119,7 @@ python scripts/run.py notebook_manager.py remove --id notebook-id
 1. Check library: `python scripts/run.py notebook_manager.py list`
 2. Ask question: `python scripts/run.py ask_question.py --question "..." --notebook-id ID`
 
-### Step 4: Ask Questions
+### Step 4: Ask Questions (NotebookLM)
 
 ```bash
 # Basic query (uses active notebook if set)
@@ -124,6 +134,62 @@ python scripts/run.py ask_question.py --question "..." --notebook-url "https://.
 # Show browser for debugging
 python scripts/run.py ask_question.py --question "..." --show-browser
 ```
+
+### Step 5: Ask Questions (Gemini)
+
+```bash
+# Query Gemini directly (no notebook required)
+python scripts/run.py ask_gemini.py --question "Your question here"
+
+# Show browser for debugging
+python scripts/run.py ask_gemini.py --question "..." --show-browser
+```
+
+**Use Cases for Gemini Mode:**
+- General knowledge questions
+- Real-time information (if Gemini has access)
+- Creative tasks (writing, brainstorming)
+- Code generation and explanation
+- Image generation queries (Gemini can generate images)
+- Multi-modal queries
+
+### Step 6: Generate Images (Gemini)
+
+```bash
+# Generate images using Gemini
+python scripts/run.py generate_image.py --prompt "Your image description"
+
+# Specify output directory
+python scripts/run.py generate_image.py --prompt "..." --output ./my_images
+
+# Show browser for debugging
+python scripts/run.py generate_image.py --prompt "..." --show-browser
+```
+
+**Examples:**
+```bash
+# Generate a cute snowman
+python scripts/run.py generate_image.py --prompt "画一个可爱的雪人"
+
+# Generate a futuristic city
+python scripts/run.py generate_image.py --prompt "A futuristic city with flying cars"
+
+# Generate abstract art
+python scripts/run.py generate_image.py --prompt "Abstract art with vibrant colors"
+```
+
+**Features:**
+- Automatic image detection using precise selectors
+- Screenshot-based saving (most reliable)
+- Fallback to URL download if needed
+- Supports multiple images per generation
+- Saves as PNG files with timestamps
+
+**Differences from NotebookLM:**
+- No notebook/document required
+- Not limited to uploaded sources
+- Broader knowledge base
+- Can generate images and creative content
 
 ## Follow-Up Mechanism (CRITICAL)
 
@@ -163,6 +229,16 @@ python scripts/run.py notebook_manager.py stats
 ### Question Interface (`ask_question.py`)
 ```bash
 python scripts/run.py ask_question.py --question "..." [--notebook-id ID] [--notebook-url URL] [--show-browser]
+```
+
+### Gemini Interface (`ask_gemini.py`)
+```bash
+python scripts/run.py ask_gemini.py --question "..." [--show-browser]
+```
+
+### Image Generation (`generate_image.py`)
+```bash
+python scripts/run.py generate_image.py --prompt "..." [--output DIR] [--show-browser]
 ```
 
 ### Data Cleanup (`cleanup_manager.py`)
@@ -211,6 +287,7 @@ DEFAULT_NOTEBOOK_ID=     # Default notebook
 
 ## Decision Flow
 
+### NotebookLM Workflow
 ```
 User mentions NotebookLM
     ↓
@@ -227,6 +304,19 @@ Ask question → python scripts/run.py ask_question.py --question "..."
 See "Is that ALL you need?" → Ask follow-ups until complete
     ↓
 Synthesize and respond to user
+```
+
+### Gemini Workflow
+```
+User mentions Gemini
+    ↓
+Check auth → python scripts/run.py auth_manager.py status
+    ↓
+If not authenticated → python scripts/run.py auth_manager.py setup
+    ↓
+Ask question → python scripts/run.py ask_gemini.py --question "..."
+    ↓
+Return answer to user
 ```
 
 ## Troubleshooting

@@ -1,15 +1,19 @@
 <div align="center">
 
-# NotebookLM Claude Code Skill
+# NotebookLM & Gemini Claude Code Skill
 
-**Let [Claude Code](https://github.com/anthropics/claude-code) chat directly with NotebookLM for source-grounded answers based exclusively on your uploaded documents**
+**Let [Claude Code](https://github.com/anthropics/claude-code) chat directly with NotebookLM for source-grounded answers from your documents, or query Gemini for general knowledge and image generation**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-purple.svg)](https://www.anthropic.com/news/skills)
 [![Based on](https://img.shields.io/badge/Based%20on-NotebookLM%20MCP-green.svg)](https://github.com/PleasePrompto/notebooklm-mcp)
 [![GitHub](https://img.shields.io/github/stars/PleasePrompto/notebooklm-skill?style=social)](https://github.com/PleasePrompto/notebooklm-skill)
 
-> Use this skill to query your Google NotebookLM notebooks directly from Claude Code for source-grounded, citation-backed answers from Gemini. Browser automation, library management, persistent auth. Drastically reduced hallucinations - answers only from your uploaded documents.
+> Use this skill to query your Google NotebookLM notebooks for source-grounded, citation-backed answers, or query Gemini directly for general knowledge and AI image generation. Browser automation, library management, persistent auth. Drastically reduced hallucinations with NotebookLM's document-only responses.
+
+**Two Modes:**
+- 📚 **NotebookLM Mode**: Query your uploaded documents for source-grounded answers
+- 🤖 **Gemini Mode**: Direct Gemini queries for general knowledge and image generation
 
 [Installation](#installation) • [Quick Start](#quick-start) • [Why NotebookLM](#why-notebooklm-not-local-rag) • [How It Works](#how-it-works) • [MCP Alternative](https://github.com/PleasePrompto/notebooklm-mcp)
 
@@ -134,11 +138,60 @@ Claude will ask for a name and topics, then save it for future use.
 
 ### 5. Start researching
 
+**NotebookLM Mode:**
 ```
 "What does my React docs say about hooks?"
 ```
-
 Claude automatically selects the right notebook and gets the answer directly from NotebookLM.
+
+**Gemini Mode:**
+```
+"Ask Gemini: What are the latest trends in AI?"
+```
+Claude queries Gemini directly for general knowledge.
+
+**Image Generation:**
+```
+"Generate an image: A cute robot reading a glowing book, surrounded by code"
+```
+Claude generates the image using Gemini and saves it locally.
+
+---
+
+## 🎨 Gemini Features
+
+### Direct Gemini Queries
+Ask Gemini for general knowledge without needing uploaded documents:
+- General knowledge questions
+- Real-time information
+- Creative writing and brainstorming
+- Code generation and explanation
+- Multi-modal queries
+
+**Example:**
+```
+You: "Ask Gemini about quantum computing"
+Claude: [Queries Gemini and returns comprehensive answer]
+```
+
+### AI Image Generation
+Generate images using Gemini's image generation capabilities:
+- Natural language descriptions
+- Multiple images per generation
+- Auto-download to local directory
+- Supports complex prompts
+
+**Example:**
+```
+You: "Generate: Futuristic cityscape at sunset with flying cars"
+Claude: [Generates images and saves to skill_intro_hq/gemini_image_*.png]
+```
+
+**Features:**
+- Precise image detection using `generated-image` selectors
+- Screenshot-based saving (most reliable method)
+- Fallback to URL download if needed
+- Timestamped filenames prevent overwrites
 
 ---
 
@@ -164,34 +217,47 @@ This is a **Claude Code Skill** - a local folder containing instructions and scr
 ├── SKILL.md              # Instructions for Claude
 ├── scripts/              # Python automation scripts
 │   ├── ask_question.py   # Query NotebookLM
+│   ├── ask_gemini.py     # Query Gemini directly (NEW)
+│   ├── generate_image.py # Generate images with Gemini (NEW)
 │   ├── notebook_manager.py # Library management
-│   └── auth_manager.py   # Google authentication
+│   ├── auth_manager.py   # Google authentication
+│   └── browser_utils.py  # Cross-platform browser support
 ├── .venv/                # Isolated Python environment (auto-created)
-└── data/                 # Local notebook library
+├── data/                 # Local notebook library
+└── images/               # Documentation and generated images
 ```
 
-When you mention NotebookLM or send a notebook URL, Claude:
+When you mention NotebookLM or Gemini, Claude:
 1. Loads the skill instructions
 2. Runs the appropriate Python script
-3. Opens a browser, asks your question
-4. Returns the answer directly to you
+3. Opens a browser, asks your question or generates images
+4. Returns the answer/images directly to you
 5. Uses that knowledge to help with your task
 
 ---
 
 ## Core Features
 
-### **Source-Grounded Responses**
+### **Source-Grounded Responses (NotebookLM)**
 NotebookLM significantly reduces hallucinations by answering exclusively from your uploaded documents. If information isn't available, it indicates uncertainty rather than inventing content.
 
+### **General Knowledge Access (Gemini)**
+Query Gemini directly for general knowledge, creative tasks, code generation, and real-time information without needing uploaded documents.
+
+### **AI Image Generation (Gemini)**
+Generate images using natural language descriptions with Gemini's image generation capabilities. Supports complex prompts and multiple images per generation.
+
 ### **Direct Integration**
-No copy-paste between browser and editor. Claude asks and receives answers programmatically.
+No copy-paste between browser and editor. Claude asks and receives answers programmatically, or generates images automatically.
 
 ### **Smart Library Management**
 Save NotebookLM links with tags and descriptions. Claude auto-selects the right notebook for your task.
 
 ### **Automatic Authentication**
-One-time Google login, then authentication persists across sessions.
+One-time Google login, then authentication persists across both NotebookLM and Gemini sessions.
+
+### **Cross-Platform Support** ✨ NEW
+Works on macOS, Windows, and Linux with automatic Chrome detection and fallback to bundled Chromium.
 
 ### **Self-Contained**
 Everything runs in the skill folder with an isolated Python environment. No global installations.
